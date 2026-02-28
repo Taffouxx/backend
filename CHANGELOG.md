@@ -3,7 +3,7 @@
 ## [0.11.5](https://github.com/stoatchat/stoatchat/compare/v0.11.4...v0.11.5) (2026-02-17)
 
 
-### Reverts
+### Reverts 
 
 * disable user update events ([#593](https://github.com/stoatchat/stoatchat/issues/593)) ([1c98ead](https://github.com/stoatchat/stoatchat/commit/1c98ead69579b4700be0b51c9020bb8402336cc6))
 
