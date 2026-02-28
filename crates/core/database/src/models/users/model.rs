@@ -8,7 +8,7 @@ use iso8601_timestamp::Timestamp;
 use once_cell::sync::Lazy;
 use rand::seq::SliceRandom;
 use revolt_config::{config, FeaturesLimits};
-use revolt_models::v0::{self, UserBadges, UserFlags};
+use revolt_models::v0::{self, UserBadges, UserFlags, Trophy};
 use revolt_presence::filter_online;
 use revolt_result::{create_error, Result};
 use serde_json::json;
@@ -43,6 +43,9 @@ auto_derived_partial!(
         /// User's profile page
         #[serde(skip_serializing_if = "Option::is_none")]
         pub profile: Option<UserProfile>,
+        /// User's Hall of Fame trophies
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub trophies: Option<Vec<Trophy>>,
 
         /// Enum of user flags
         #[serde(skip_serializing_if = "Option::is_none")]

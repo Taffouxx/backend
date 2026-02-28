@@ -10,7 +10,7 @@ impl crate::Bot {
         assert_eq!(self.id, user.id);
 
         PublicBot {
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
             username: user.username,
             avatar: user.avatar.map(|x| x.id).unwrap_or_default(),
             description: user
@@ -440,7 +440,7 @@ impl From<Metadata> for crate::Metadata {
 impl crate::Message {
     pub fn into_model(self, user: Option<User>, member: Option<Member>) -> Message {
         Message {
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
             nonce: self.nonce,
             channel: self.channel,
             author: self.author,
@@ -1037,7 +1037,7 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship,
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1101,7 +1101,7 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship,
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1129,7 +1129,7 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship: RelationshipStatus::None, // events client will populate this from cache
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1164,7 +1164,7 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship: RelationshipStatus::User,
-            id: self.id,
+            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
