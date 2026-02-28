@@ -78,6 +78,19 @@ auto_derived_partial!(
             serde(skip_serializing_if = "crate::if_false", default)
         )]
         pub discoverable: bool,
+        /// Whether this server is a community server
+        #[cfg_attr(
+            feature = "serde",
+            serde(skip_serializing_if = "crate::if_false", default)
+        )]
+        pub is_community: bool,
+
+        /// Whether this server is partnered
+        #[cfg_attr(
+            feature = "serde",
+            serde(skip_serializing_if = "crate::if_false", default)
+        )]
+        pub is_partnered: bool,
     },
     "PartialServer"
 );
@@ -251,6 +264,8 @@ auto_derived!(
         ///
         /// Must be enabled in order to show up on [Revolt Discover](https://rvlt.gg).
         pub analytics: Option<bool>,
+        /// Whether this server is a community server
+        pub is_community: Option<bool>,
 
         /// Fields to remove from server object
         #[cfg_attr(feature = "serde", serde(default))]
