@@ -10,7 +10,8 @@ impl crate::Bot {
         assert_eq!(self.id, user.id);
 
         PublicBot {
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
+            trophies: self.trophies.unwrap_or_default(),
             username: user.username,
             avatar: user.avatar.map(|x| x.id).unwrap_or_default(),
             description: user
