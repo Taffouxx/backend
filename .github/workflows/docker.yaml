@@ -33,21 +33,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 1. Собираем базовый образ
+      # 1. Собираем базовый образ (БЕЗ КЭША)
       - name: Build base image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
+          no-cache: true
           platforms: linux/amd64
           tags: ghcr.io/taffouxx/base:latest
 
-      # 2. Собираем главное API (где твои новые фичи с трофеями)
+      # 2. Собираем главное API (БЕЗ КЭША)
       - name: Publish API
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
+          no-cache: true
           platforms: linux/amd64
           file: crates/delta/Dockerfile
           tags: ghcr.io/taffouxx/api:latest
@@ -60,6 +62,7 @@ jobs:
         with:
           context: .
           push: true
+          no-cache: true
           platforms: linux/amd64
           file: crates/bonfire/Dockerfile
           tags: ghcr.io/taffouxx/events:latest
