@@ -11,8 +11,9 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-// МЫ ВЫКИНУЛИ МАКРОС И ПИШЕМ СТРУКТУРУ ЯВНО, ЧТОБЫ СЕРДЕ ЕЁ ВИДЕЛ
+// ВОТ ОНО! Возвращаем JsonSchema, из-за отсутствия которой Rust сошел с ума!
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[cfg_attr(feature = "schemas", derive(schemars::JsonSchema))]
 #[cfg_attr(feature = "validator", derive(Validate))]
 pub struct User {
     #[serde(rename = "_id")]
@@ -29,7 +30,7 @@ pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub status: Option<UserStatus>,
     
-    // ТЕПЕРЬ ОНО ТУТ ЖЕЛЕЗОБЕТОННО
+    // Твои трофеи
     #[serde(default)]
     pub trophies: Vec<Trophy>,
 
@@ -41,7 +42,6 @@ pub struct User {
     pub online: bool,
 }
 
-// Вспомогательные штуки оставляем в обычном макросе
 auto_derived!(
     pub enum FieldsUser {
         Avatar, StatusText, StatusPresence, StatusEmoji, ProfileContent, ProfileBackground, DisplayName, Internal,
@@ -67,7 +67,8 @@ auto_derived!(
         pub emoji: Option<String>,
     }
 
-    #[derive(Serialize, Deserialize, Debug, Clone, Default)]
+    // Макрос сам добавит Serialize, Deserialize и JsonSchema
+    #[derive(Default)]
     pub struct Trophy {
         pub id: String,
         pub title: String,
@@ -82,10 +83,9 @@ auto_derived!(
     }
 );
 
-// ЭТОТ БЛОК ОБЯЗАТЕЛЕН - ОН ПЕРЕКЛАДЫВАЕТ ДАННЫЕ ИЗ БАЗЫ В API
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
-        // ДОБАВИМ DEBUG PRINT - УВИДИШЬ ЕГО В ЛОГАХ ПРИ ЗАПРОСЕ
+        // Тот самый DEBUG PRINT
         if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
             println!("!!! DEBUG: DB TROPHIES: {:?}", value.trophies);
         }
@@ -95,15 +95,18 @@ impl From<crate::User> for User {
             username: value.username,
             discriminator: value.discriminator,
             display_name: value.display_name,
-            avatar: value.avatar.map(|f| f.into()),
-            relations: value.relations.map(|r| r.into_iter().map(|i| i.into()).collect()).unwrap_or_default(),
+            
+            // ЯВНО указываем типы, чтобы компилятор не задавал тупых вопросов
+            avatar: value.avatar.map(|f| File::from(f)),
+            relations: value.relations.map(|r| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
             status: value.status.map(|s| s.into(true)).flatten(),
             flags: value.flags.unwrap_or_default() as u32,
             privileged: value.privileged,
-            bot: value.bot.map(|b| b.into()),
+            bot: value.bot.map(|b| BotInformation::from(b)),
             relationship: RelationshipStatus::None,
             online: false,
+            
             trophies: value.trophies.unwrap_or_default(),
         }
     }
