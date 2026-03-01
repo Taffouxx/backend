@@ -729,7 +729,7 @@ impl User {
         self.update(
             db,
             PartialUser {
-                flags: Some(UserFlags::SuspendedUntil as i32),
+                flags: Some(UserFlags::Suspended as i32),
                 suspended_until: duration_days.and_then(|dur| {
                     Timestamp::now_utc().checked_add(iso8601_timestamp::Duration::days(dur as i64))
                 }),

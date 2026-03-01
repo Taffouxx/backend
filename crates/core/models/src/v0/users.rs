@@ -58,6 +58,14 @@ auto_derived!(
         ReservedRelevantJokeBadge2 = 1024,
     }
 
+    auto_derived_partial!(
+    pub struct UserVoiceState {
+        pub channel_id: String,
+        pub session_id: String,
+    },
+    "PartialUserVoiceState"
+    );
+
     /// User flag enum
     #[repr(u32)]
     pub enum UserFlags {

@@ -11,7 +11,6 @@ impl crate::Bot {
 
         PublicBot {
             id: self.id,
-            trophies: self.trophies.unwrap_or_default(),
             username: user.username,
             avatar: user.avatar.map(|x| x.id).unwrap_or_default(),
             description: user
@@ -74,6 +73,9 @@ impl From<crate::Invite> for Invite {
                 server,
                 creator,
                 channel,
+                discoverable: value.discoverable,
+                is_community: false,
+                is_partnered: false,
             } => Invite::Server {
                 code,
                 server,
@@ -1184,6 +1186,7 @@ impl crate::User {
 impl From<User> for crate::User {
     fn from(value: User) -> crate::User {
         crate::User {
+            trophies: Some(vec![]),
             id: value.id,
             username: value.username,
             discriminator: value.discriminator,
@@ -1223,6 +1226,7 @@ impl From<crate::PartialUser> for PartialUser {
             relationship: None,
             online: None,
             id: value.id,
+            trophies: vec![],
         }
     }
 }
@@ -1235,6 +1239,7 @@ impl From<FieldsUser> for crate::FieldsUser {
             FieldsUser::ProfileContent => crate::FieldsUser::ProfileContent,
             FieldsUser::StatusPresence => crate::FieldsUser::StatusPresence,
             FieldsUser::StatusText => crate::FieldsUser::StatusText,
+            FieldsUser::StatusEmoji => crate::FieldsUser::None,
             FieldsUser::DisplayName => crate::FieldsUser::DisplayName,
 
             FieldsUser::Internal => crate::FieldsUser::None,
@@ -1316,6 +1321,7 @@ impl crate::UserStatus {
                     Some(presence.into())
                 }
             }),
+            emoji: None,
         };
 
         if status.text.is_none() && status.presence.is_none() {
