@@ -11,38 +11,35 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-// ВОТ ОНО! Возвращаем JsonSchema, из-за отсутствия которой Rust сошел с ума!
-#[derive(Serialize, Deserialize, Debug, Clone, Default)]
-#[cfg_attr(feature = "schemas", derive(schemars::JsonSchema))]
-#[cfg_attr(feature = "validator", derive(Validate))]
-pub struct User {
-    #[serde(rename = "_id")]
-    pub id: String,
-    pub username: String,
-    pub discriminator: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub display_name: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub avatar: Option<File>,
-    #[serde(skip_serializing_if = "Vec::is_empty", default)]
-    pub relations: Vec<Relationship>,
-    pub badges: u32,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub status: Option<UserStatus>,
-    
-    // Твои трофеи
-    #[serde(default)]
-    pub trophies: Vec<Trophy>,
-
-    pub flags: u32,
-    pub privileged: bool,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub bot: Option<BotInformation>,
-    pub relationship: RelationshipStatus,
-    pub online: bool,
-}
-
+// ВСЁ засовываем в auto_derived!, чтобы Револт сам повесил нужные трейты (Eq, PartialEq, JsonSchema)
 auto_derived!(
+    pub struct User {
+        #[serde(rename = "_id")]
+        pub id: String,
+        pub username: String,
+        pub discriminator: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub display_name: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub avatar: Option<File>,
+        #[serde(skip_serializing_if = "Vec::is_empty", default)]
+        pub relations: Vec<Relationship>,
+        pub badges: u32,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub status: Option<UserStatus>,
+        
+        // Твои трофеи теперь внутри правильной структуры
+        #[serde(default)]
+        pub trophies: Vec<Trophy>,
+
+        pub flags: u32,
+        pub privileged: bool,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub bot: Option<BotInformation>,
+        pub relationship: RelationshipStatus,
+        pub online: bool,
+    }
+
     pub enum FieldsUser {
         Avatar, StatusText, StatusPresence, StatusEmoji, ProfileContent, ProfileBackground, DisplayName, Internal,
     }
@@ -67,7 +64,7 @@ auto_derived!(
         pub emoji: Option<String>,
     }
 
-    // Макрос сам добавит Serialize, Deserialize и JsonSchema
+    // Твоя структура трофея (в единственном экземпляре)
     #[derive(Default)]
     pub struct Trophy {
         pub id: String,
@@ -83,9 +80,10 @@ auto_derived!(
     }
 );
 
+// А вот блок конвертации всегда живет отдельно
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
-        // Тот самый DEBUG PRINT
+        // Оставляем дебаг, чтобы убедиться, что база отдает данные
         if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
             println!("!!! DEBUG: DB TROPHIES: {:?}", value.trophies);
         }
@@ -96,7 +94,7 @@ impl From<crate::User> for User {
             discriminator: value.discriminator,
             display_name: value.display_name,
             
-            // ЯВНО указываем типы, чтобы компилятор не задавал тупых вопросов
+            // Явные типы спасают компилятор от паники
             avatar: value.avatar.map(|f| File::from(f)),
             relations: value.relations.map(|r| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
@@ -107,6 +105,7 @@ impl From<crate::User> for User {
             relationship: RelationshipStatus::None,
             online: false,
             
+            // Маппим трофеи
             trophies: value.trophies.unwrap_or_default(),
         }
     }
