@@ -1,4 +1,3 @@
-use iso8601_timestamp::Timestamp;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::{Serialize, Deserialize};
@@ -11,8 +10,22 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-auto_derived_partial!(
-    /// User
+auto_derived!(
+    /// User badge bitfield
+    #[repr(u32)]
+    pub enum UserBadges {
+        Developer = 1 << 0,
+        Translator = 1 << 1,
+        Supporter = 1 << 2,
+        ResponsibleDisclosure = 1 << 3,
+        Founder = 1 << 4,
+        PlatformModeration = 1 << 5,
+        ActiveSupporter = 1 << 6,
+        Paw = 1 << 7,
+        EarlyAdopter = 1 << 8,
+        Reserved9 = 1 << 9,
+    }
+
     pub struct User {
         #[serde(rename = "_id")]
         pub id: String,
@@ -28,6 +41,7 @@ auto_derived_partial!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
+        // Твои трофеи
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -37,42 +51,6 @@ auto_derived_partial!(
         pub bot: Option<BotInformation>,
         pub relationship: RelationshipStatus,
         pub online: bool,
-    },
-    "PartialUser"
-);
-
-auto_derived!(
-    /// User badge bitfield
-    #[repr(u32)]
-    pub enum UserBadges {
-        Developer = 1,
-        Translator = 2,
-        Supporter = 4,
-        ResponsibleDisclosure = 8,
-        Founder = 16,
-        PlatformModeration = 32,
-        ActiveSupporter = 64,
-        Paw = 128,
-        EarlyAdopter = 256,
-        ReservedRelevantJokeBadge1 = 512,
-        ReservedRelevantJokeBadge2 = 1024,
-    }
-
-    auto_derived_partial!(
-    pub struct UserVoiceState {
-        pub channel_id: String,
-        pub session_id: String,
-    },
-    "PartialUserVoiceState"
-    );
-
-    /// User flag enum
-    #[repr(u32)]
-    pub enum UserFlags {
-        Suspended = 1,
-        Deleted = 2,
-        Banned = 4,
-        Spam = 8,
     }
 
     pub enum FieldsUser {
@@ -126,8 +104,8 @@ auto_derived!(
     }
 );
 
-// ВОТ ОНО! Спасение от всех бед!
-#[cfg(feature = "database")]
+// Конвертация из БД (только если есть фича bson/database)
+#[cfg(any(feature = "bson", feature = "rocket"))]
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
         if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
@@ -139,17 +117,15 @@ impl From<crate::User> for User {
             username: value.username,
             discriminator: value.discriminator,
             display_name: value.display_name,
-            
-            avatar: value.avatar.map(|f| File::from(f)),
-            relations: value.relations.map(|r: Vec<_>| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
+            avatar: value.avatar.map(File::from),
+            relations: value.relations.map(|r| r.into_iter().map(Relationship::from).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
             status: value.status.map(|s| s.into(true)).flatten(),
             flags: value.flags.unwrap_or_default() as u32,
             privileged: value.privileged,
-            bot: value.bot.map(|b| BotInformation::from(b)),
+            bot: value.bot.map(BotInformation::from),
             relationship: RelationshipStatus::None,
             online: false,
-            
             trophies: value.trophies.unwrap_or_default(),
         }
     }
