@@ -11,7 +11,7 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-// ВСЁ засовываем в auto_derived!, чтобы Револт сам повесил нужные трейты (Eq, PartialEq, JsonSchema)
+// Весь код сидит в макросе, чтобы генерировались схемы для API
 auto_derived!(
     pub struct User {
         #[serde(rename = "_id")]
@@ -28,7 +28,7 @@ auto_derived!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
-        // Твои трофеи теперь внутри правильной структуры
+        // ТВОИ КУБКИ
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -64,7 +64,7 @@ auto_derived!(
         pub emoji: Option<String>,
     }
 
-    // Твоя структура трофея (в единственном экземпляре)
+    // СТРУКТУРА КУБКА
     #[derive(Default)]
     pub struct Trophy {
         pub id: String,
@@ -78,12 +78,25 @@ auto_derived!(
         #[serde(rename = "owner")]
         pub owner_id: String,
     }
+
+    // СТРУКТУРЫ, КОТОРЫЕ БЫЛИ СТЕРТЫ (возвращаем на базу)
+    #[derive(Default)]
+    pub struct UserProfile {
+        pub content: Option<String>,
+        pub background: Option<File>,
+    }
+
+    #[derive(Default)]
+    pub struct UserVoiceState {
+        pub channel_id: String,
+        pub session_id: String,
+    }
 );
 
-// А вот блок конвертации всегда живет отдельно
+// Блок конвертации данных из базы
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
-        // Оставляем дебаг, чтобы убедиться, что база отдает данные
+        // Дебаг для логов
         if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
             println!("!!! DEBUG: DB TROPHIES: {:?}", value.trophies);
         }
@@ -94,7 +107,7 @@ impl From<crate::User> for User {
             discriminator: value.discriminator,
             display_name: value.display_name,
             
-            // Явные типы спасают компилятор от паники
+            // Явные конвертации, чтобы компилятор не задавал вопросов
             avatar: value.avatar.map(|f| File::from(f)),
             relations: value.relations.map(|r| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
@@ -105,7 +118,7 @@ impl From<crate::User> for User {
             relationship: RelationshipStatus::None,
             online: false,
             
-            // Маппим трофеи
+            // Закидываем кубки
             trophies: value.trophies.unwrap_or_default(),
         }
     }
