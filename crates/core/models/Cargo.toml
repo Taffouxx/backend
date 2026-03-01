@@ -16,7 +16,7 @@ validator = ["dep:validator"]
 rocket = ["dep:rocket"]
 partials = ["dep:revolt_optional_struct", "serde", "schemas", "utoipa"]
 serde = ["dep:serde", "iso8601-timestamp/serde"]
-bson = ["dep:bson", "iso8601-timestamp/bson" "revolt-permissions/serde", "indexmap/serde"]
+bson = ["dep:bson", "iso8601-timestamp/bson", "revolt-permissions/serde", "indexmap/serde"]
 
 default = ["serde", "partials", "rocket"]
 
