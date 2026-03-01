@@ -41,7 +41,7 @@ auto_derived!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
-        // Твои трофеи
+        // КУБКИ
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -104,14 +104,10 @@ auto_derived!(
     }
 );
 
-// Конвертация из БД (только если есть фича bson/database)
-#[cfg(any(feature = "bson", feature = "rocket"))]
+// Используем флаг bson, который обычно активен там, где нужна конвертация из базы
+#[cfg(feature = "bson")]
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
-        if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
-            println!("!!! DEBUG: DB TROPHIES: {:?}", value.trophies);
-        }
-
         Self {
             id: value.id,
             username: value.username,
