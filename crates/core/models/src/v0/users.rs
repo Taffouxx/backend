@@ -11,7 +11,6 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-// Весь код сидит в макросе, чтобы генерировались схемы для API
 auto_derived!(
     pub struct User {
         #[serde(rename = "_id")]
@@ -28,7 +27,6 @@ auto_derived!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
-        // ТВОИ КУБКИ
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -64,7 +62,6 @@ auto_derived!(
         pub emoji: Option<String>,
     }
 
-    // СТРУКТУРА КУБКА
     #[derive(Default)]
     pub struct Trophy {
         pub id: String,
@@ -79,7 +76,6 @@ auto_derived!(
         pub owner_id: String,
     }
 
-    // СТРУКТУРЫ, КОТОРЫЕ БЫЛИ СТЕРТЫ (возвращаем на базу)
     #[derive(Default)]
     pub struct UserProfile {
         pub content: Option<String>,
@@ -93,10 +89,10 @@ auto_derived!(
     }
 );
 
-// Блок конвертации данных из базы
+// ВОТ ОНО! Спасение от всех бед!
+#[cfg(feature = "database")]
 impl From<crate::User> for User {
     fn from(value: crate::User) -> Self {
-        // Дебаг для логов
         if value.id == "01KHEWJGGMN8RA5AW2620DGMK6" {
             println!("!!! DEBUG: DB TROPHIES: {:?}", value.trophies);
         }
@@ -107,9 +103,9 @@ impl From<crate::User> for User {
             discriminator: value.discriminator,
             display_name: value.display_name,
             
-            // Явные конвертации, чтобы компилятор не задавал вопросов
             avatar: value.avatar.map(|f| File::from(f)),
-            relations: value.relations.map(|r| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
+            // Явный тип Vec<_> для железной надежности
+            relations: value.relations.map(|r: Vec<_>| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
             status: value.status.map(|s| s.into(true)).flatten(),
             flags: value.flags.unwrap_or_default() as u32,
@@ -118,7 +114,6 @@ impl From<crate::User> for User {
             relationship: RelationshipStatus::None,
             online: false,
             
-            // Закидываем кубки
             trophies: value.trophies.unwrap_or_default(),
         }
     }
