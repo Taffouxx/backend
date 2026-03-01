@@ -6905,7 +6905,7 @@ dependencies = [
 
 [[package]]
 name = "revolt-database"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "amqprs",
  "async-lock 2.8.0",
@@ -6955,7 +6955,7 @@ dependencies = [
 
 [[package]]
 name = "revolt-delta"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "amqprs",
  "async-channel 1.9.0",
@@ -7084,7 +7084,7 @@ dependencies = [
 
 [[package]]
 name = "revolt-models"
-version = "0.11.5"
+version = "0.11.6"
 dependencies = [
  "indexmap 1.9.3",
  "iso8601-timestamp",
