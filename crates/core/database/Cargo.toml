@@ -1,6 +1,6 @@
 [package]
 name = "revolt-database"
-version = "0.11.5"
+version = "0.11.6"
 edition = "2021"
 license = "AGPL-3.0-or-later"
 authors = ["Paul Makles <me@insrt.uk>"]
@@ -36,7 +36,7 @@ revolt-config = { version = "0.11.5", path = "../config", features = [
     "report-macros",
 ] }
 revolt-result = { version = "0.11.5", path = "../result" }
-revolt-models = { version = "0.11.5", path = "../models", features = [
+revolt-models = { version = "0.11.6", path = "../models", features = [
     "validator",
 ] }
 revolt-presence = { version = "0.11.5", path = "../presence" }
