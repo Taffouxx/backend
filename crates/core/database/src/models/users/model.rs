@@ -179,6 +179,7 @@ impl Default for User {
             badges: Default::default(),
             status: Default::default(),
             profile: Default::default(),
+            trophies: Default::default(),
             flags: Default::default(),
             privileged: Default::default(),
             bot: Default::default(),
