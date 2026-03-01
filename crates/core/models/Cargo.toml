@@ -10,12 +10,13 @@ repository = "https://github.com/stoatchat/stoatchat"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-serde = ["dep:serde", "revolt-permissions/serde", "indexmap/serde"]
 schemas = ["dep:schemars", "revolt-permissions/schemas"]
 utoipa = ["dep:utoipa"]
 validator = ["dep:validator"]
 rocket = ["dep:rocket"]
 partials = ["dep:revolt_optional_struct", "serde", "schemas", "utoipa"]
+serde = ["dep:serde", "iso8601-timestamp/serde"]
+bson = ["dep:bson", "iso8601-timestamp/bson" "revolt-permissions/serde", "indexmap/serde"]
 
 default = ["serde", "partials", "rocket"]
 
@@ -23,6 +24,7 @@ default = ["serde", "partials", "rocket"]
 # Core
 revolt-config = { version = "0.11.5", path = "../config" }
 revolt-permissions = { version = "0.11.5", path = "../permissions" }
+bson = { version = "2.1.0", optional = true }
 
 # Utility
 regex = "1.11"

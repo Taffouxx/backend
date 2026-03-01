@@ -80,7 +80,7 @@ revolt-models = { path = "../core/models", features = [
     "validator",
     "rocket",
     "serde",
-    "bson"
+    "bson" 
 ] }
 revolt-presence = { path = "../core/presence" }
 revolt-result = { path = "../core/result", features = ["rocket", "okapi"] }
