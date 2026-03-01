@@ -11,7 +11,8 @@ use validator::Validate;
 pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])+$").unwrap());
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
-auto_derived!(
+auto_derived_partial!(
+    /// User
     pub struct User {
         #[serde(rename = "_id")]
         pub id: String,
@@ -36,6 +37,34 @@ auto_derived!(
         pub bot: Option<BotInformation>,
         pub relationship: RelationshipStatus,
         pub online: bool,
+    },
+    "PartialUser"
+);
+
+auto_derived!(
+    /// User badge bitfield
+    #[repr(u32)]
+    pub enum UserBadges {
+        Developer = 1,
+        Translator = 2,
+        Supporter = 4,
+        ResponsibleDisclosure = 8,
+        Founder = 16,
+        PlatformModeration = 32,
+        ActiveSupporter = 64,
+        Paw = 128,
+        EarlyAdopter = 256,
+        ReservedRelevantJokeBadge1 = 512,
+        ReservedRelevantJokeBadge2 = 1024,
+    }
+
+    /// User flag enum
+    #[repr(u32)]
+    pub enum UserFlags {
+        Suspended = 1,
+        Deleted = 2,
+        Banned = 4,
+        Spam = 8,
     }
 
     pub enum FieldsUser {
@@ -104,7 +133,6 @@ impl From<crate::User> for User {
             display_name: value.display_name,
             
             avatar: value.avatar.map(|f| File::from(f)),
-            // Явный тип Vec<_> для железной надежности
             relations: value.relations.map(|r: Vec<_>| r.into_iter().map(|i| Relationship::from(i)).collect()).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
             status: value.status.map(|s| s.into(true)).flatten(),
