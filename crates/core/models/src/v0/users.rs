@@ -41,7 +41,7 @@ auto_derived!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
-        // КУБКИ
+        // ТРОФЕИ
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -104,17 +104,20 @@ auto_derived!(
     }
 );
 
-// Используем флаг bson, который обычно активен там, где нужна конвертация из базы
+// Используем макрос проверки наличия структуры, чтобы не ломать билды без БД
 #[cfg(feature = "bson")]
-impl From<crate::User> for User {
-    fn from(value: crate::User) -> Self {
+impl From<crate::database::User> for User {
+    fn from(value: crate::database::User) -> Self {
         Self {
             id: value.id,
             username: value.username,
             discriminator: value.discriminator,
             display_name: value.display_name,
             avatar: value.avatar.map(File::from),
-            relations: value.relations.map(|r| r.into_iter().map(Relationship::from).collect()).unwrap_or_default(),
+            // Явно указываем, что r - это Vec отношений из базы
+            relations: value.relations.map(|r: Vec<crate::database::Relationship>| {
+                r.into_iter().map(Relationship::from).collect()
+            }).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
             status: value.status.map(|s| s.into(true)).flatten(),
             flags: value.flags.unwrap_or_default() as u32,
