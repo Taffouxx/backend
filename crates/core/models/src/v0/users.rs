@@ -55,7 +55,7 @@ auto_derived_partial!(
         pub status: Option<UserStatus>,
 
         /// User's Hall of Fame trophies
-        #[cfg_attr(feature = "serde", serde(default))]
+        #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Vec::is_empty", default))]
         pub trophies: Vec<Trophy>,
 
         /// Enum of user flags
@@ -159,12 +159,10 @@ auto_derived!(
         pub emoji: Option<String>,
     }
 
-    /// User's profile
-    #[derive(Default)]
-    #[cfg_attr(feature = "validator", derive(Validate))]
     /// Digital trophy for Hall of Fame
-    #[derive(Default)]
+    #[derive(Clone, Debug, Default)]
     #[cfg_attr(feature = "validator", derive(Validate))]
+    #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
     pub struct Trophy {
         #[cfg_attr(feature = "validator", validate(length(min = 1, max = 64)))]
         pub id: String,
@@ -334,5 +332,26 @@ impl CheckRelationship for Vec<Relationship> {
         }
 
         RelationshipStatus::None
+    }
+}
+
+impl From<crate::User> for User {
+    fn from(value: crate::User) -> Self {
+        Self {
+            username: value.username,
+            discriminator: value.discriminator,
+            display_name: value.display_name,
+            avatar: value.avatar.map(|file| file.into()),
+            relations: value.relations.unwrap_or_default().into_iter().map(|r| r.into()).collect(),
+            badges: value.badges.unwrap_or_default() as u32,
+            status: value.status.map(|s| s.into(true)).flatten(),
+            flags: value.flags.unwrap_or_default() as u32,
+            privileged: value.privileged,
+            bot: value.bot.map(|b| b.into()),
+            relationship: RelationshipStatus::None, 
+            online: false,
+            id: value.id,
+            trophies: value.trophies.unwrap_or_default(), // <--- ВОТ РАДИ ЧЕГО МЫ ТУТ СОБРАЛИСЬ
+        }
     }
 }
