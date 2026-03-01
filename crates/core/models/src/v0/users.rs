@@ -169,22 +169,21 @@ auto_derived!(
     #[derive(Default)]
     #[cfg_attr(feature = "validator", derive(Validate))]
     pub struct Trophy {
-        /// Unique trophy identifier (e.g., "cs2_major_2026")
         #[cfg_attr(feature = "validator", validate(length(min = 1, max = 64)))]
         pub id: String,
-        /// Title of the trophy
         #[cfg_attr(feature = "validator", validate(length(min = 1, max = 128)))]
         pub title: String,
-        /// Description / Subtext (e.g., "Победитель ZEELO 2026 FRACTION CS2 MAJOR")
         #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
         pub description: Option<String>,
-        /// Optional icon/image URL for the trophy
         #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
         pub icon: Option<String>,
-        /// Date awarded (e.g., "Февраль 2026")
         #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
         pub date: Option<String>,
     }
+
+    /// User's profile
+    #[derive(Default)]
+    #[cfg_attr(feature = "validator", derive(Validate))]
     pub struct UserProfile {
         /// Text content on user's profile
         #[validate(length(min = 0, max = 2000))]
