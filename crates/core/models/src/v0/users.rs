@@ -11,21 +11,6 @@ pub static RE_USERNAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(\p{L}|[\d_.-])
 pub static RE_DISPLAY_NAME: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[^\u200B\n\r]+$").unwrap());
 
 auto_derived!(
-    /// User badge bitfield
-    #[repr(u32)]
-    pub enum UserBadges {
-        Developer = 1 << 0,
-        Translator = 1 << 1,
-        Supporter = 1 << 2,
-        ResponsibleDisclosure = 1 << 3,
-        Founder = 1 << 4,
-        PlatformModeration = 1 << 5,
-        ActiveSupporter = 1 << 6,
-        Paw = 1 << 7,
-        EarlyAdopter = 1 << 8,
-        Reserved9 = 1 << 9,
-    }
-
     pub struct User {
         #[serde(rename = "_id")]
         pub id: String,
@@ -41,7 +26,7 @@ auto_derived!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub status: Option<UserStatus>,
         
-        // ТРОФЕИ
+        // КУБКИ
         #[serde(default)]
         pub trophies: Vec<Trophy>,
 
@@ -104,18 +89,18 @@ auto_derived!(
     }
 );
 
-// Используем макрос проверки наличия структуры, чтобы не ломать билды без БД
+// Возвращаем crate::User вместо crate::database::User
 #[cfg(feature = "bson")]
-impl From<crate::database::User> for User {
-    fn from(value: crate::database::User) -> Self {
+impl From<crate::User> for User {
+    fn from(value: crate::User) -> Self {
         Self {
             id: value.id,
             username: value.username,
             discriminator: value.discriminator,
             display_name: value.display_name,
             avatar: value.avatar.map(File::from),
-            // Явно указываем, что r - это Vec отношений из базы
-            relations: value.relations.map(|r: Vec<crate::database::Relationship>| {
+            // Исправляем путь и тут
+            relations: value.relations.map(|r: Vec<crate::Relationship>| {
                 r.into_iter().map(Relationship::from).collect()
             }).unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
