@@ -1,5 +1,8 @@
-# Build Stage
-FROM ghcr.io/stoatchat/base:latest AS builder
+# СНАЧАЛА ОБЪЯВЛЯЕМ АРГУМЕНТ, ЧТОБЫ ПРИНЯТЬ ТВОЙ СВЕЖИЙ БИЛД
+ARG BASE_IMAGE=ghcr.io/stoatchat/base:latest
+
+# ТЕПЕРЬ ИСПОЛЬЗУЕМ ЕГО!
+FROM ${BASE_IMAGE} AS builder
 FROM debian:12 AS debian
 
 # Bundle Stage
