@@ -39,4 +39,5 @@ RUN sh /tmp/build-image-layer.sh deps
 
 # Build all apps
 COPY crates ./crates
+RUN find crates -type f -name "*.rs" -exec touch {} +
 RUN sh /tmp/build-image-layer.sh apps
