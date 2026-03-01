@@ -439,9 +439,9 @@ impl From<Metadata> for crate::Metadata {
 }
 
 impl crate::Message {
-    pub fn into_model(self, user: Option<User>, member: Option<Member>) -> Message {
+pub fn into_model(self, user: Option<User>, member: Option<Member>) -> Message {
         Message {
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
             nonce: self.nonce,
             channel: self.channel,
             author: self.author,
@@ -1038,7 +1038,8 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship,
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
+            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1102,7 +1103,8 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship,
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
+            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1130,7 +1132,8 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship: RelationshipStatus::None, // events client will populate this from cache
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
+            trophies: self.trophies.unwrap_or_default(),
         }
     }
 
@@ -1165,7 +1168,8 @@ impl crate::User {
             privileged: self.privileged,
             bot: self.bot.map(|bot| bot.into()),
             relationship: RelationshipStatus::User,
-            id: self.id,\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),\n            trophies: self.trophies.unwrap_or_default(),
+            id: self.id,
+            trophies: self.trophies.unwrap_or_default(),
         }
     }
 

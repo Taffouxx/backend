@@ -55,10 +55,7 @@ auto_derived_partial!(
         pub status: Option<UserStatus>,
 
         /// User's Hall of Fame trophies
-        #[cfg_attr(
-            feature = "serde",
-            serde(skip_serializing_if = "Vec::is_empty", default)
-        )]
+        #[cfg_attr(feature = "serde", serde(default))]
         pub trophies: Vec<Trophy>,
 
         /// Enum of user flags
