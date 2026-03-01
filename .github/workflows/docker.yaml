@@ -42,6 +42,8 @@ jobs:
           no-cache: true
           platforms: linux/amd64
           tags: ghcr.io/taffouxx/base:latest
+          build-args: |
+            GITHUB_SHA=${{ github.sha }}
 
       # 2. Собираем главное API (БЕЗ КЭША)
       - name: Publish API
