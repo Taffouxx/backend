@@ -89,7 +89,6 @@ auto_derived!(
     }
 );
 
-// ✅ ИСПРАВЛЕННАЯ ВЕРСИЯ
 #[cfg(feature = "bson")]
 impl From<revolt_database::User> for User {
     fn from(value: revolt_database::User) -> Self {
@@ -99,17 +98,23 @@ impl From<revolt_database::User> for User {
             discriminator: value.discriminator,
             display_name: value.display_name,
             avatar: value.avatar.map(File::from),
+            
+            // ✅ ЯВНО УКАЗЫВАЕМ ТИП
             relations: value
                 .relations
-                .map(|relations| {
+                .map(|relations: Vec<revolt_database::Relationship>| {
                     relations
                         .into_iter()
                         .map(Relationship::from)
                         .collect()
                 })
                 .unwrap_or_default(),
+                
             badges: value.badges.unwrap_or_default() as u32,
-            status: value.status.and_then(|s| UserStatus::from(s).into()),  // ✅ ИСПРАВЛЕНО
+            
+            // ✅ УПРОЩАЕМ (убираем .into())
+            status: value.status.and_then(|s| s.into()),
+            
             flags: value.flags.unwrap_or_default() as u32,
             privileged: value.privileged,
             bot: value.bot.map(BotInformation::from),
