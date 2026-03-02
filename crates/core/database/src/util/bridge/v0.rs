@@ -73,15 +73,12 @@ impl From<crate::Invite> for Invite {
                 server,
                 creator,
                 channel,
-                discoverable: value.discoverable,
-                is_community: false,
-                is_partnered: false,
             } => Invite::Server {
                 code,
                 server,
                 creator,
                 channel,
-                discoverable: value.discoverable,
+                discoverable: false,
                 is_community: false,
                 is_partnered: false,
             },
@@ -807,8 +804,8 @@ impl From<crate::PartialServer> for PartialServer {
             nsfw: value.nsfw,
             analytics: value.analytics,
             discoverable: value.discoverable,
-            is_community: false,
-            is_partnered: false,
+            is_community: Some(false),
+            is_partnered: Some(false),
         }
     }
 }
