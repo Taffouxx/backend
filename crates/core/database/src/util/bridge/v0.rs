@@ -1215,7 +1215,7 @@ impl From<crate::User> for User {
             avatar: value.avatar.map(File::from),
             relations: value.relations.unwrap_or_default().into_iter().map(Relationship::from).collect(),
             badges: value.badges.unwrap_or_default() as u32,
-            status: value.status.and_then(|s| s.into()),
+            status: value.status.and_then(|s| s.into(true)),
             trophies: value.trophies.unwrap_or_default(),
             flags: value.flags.unwrap_or_default() as u32,
             privileged: value.privileged,

@@ -85,6 +85,50 @@ auto_derived!(
     pub struct UserVoiceState {
         pub channel_id: String,
         pub session_id: String,
+        pub id: String,
+        pub joined_at: String,
+        pub is_receiving: bool,
+        pub is_publishing: bool,
+        pub screensharing: bool,
+        pub camera: bool,
     }
+
+    pub struct PartialUser {
+        #[serde(rename = "_id")]
+        pub id: Option<String>,
+        pub username: Option<String>,
+        pub discriminator: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub display_name: Option<String>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub avatar: Option<File>,
+        #[serde(skip_serializing_if = "Vec::is_empty", default)]
+        pub relations: Option<Vec<Relationship>>,
+        pub badges: Option<u32>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub status: Option<UserStatus>,
+        #[serde(default)]
+        pub trophies: Option<Vec<Trophy>>,
+        pub flags: Option<u32>,
+        pub privileged: Option<bool>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        pub bot: Option<BotInformation>,
+        pub relationship: Option<RelationshipStatus>,
+        pub online: Option<bool>,
+    }
+
+    pub struct PartialUserVoiceState {
+        pub channel_id: Option<String>,
+        pub session_id: Option<String>,
+        pub id: Option<String>,
+        pub joined_at: Option<String>,
+        pub is_receiving: Option<bool>,
+        pub is_publishing: Option<bool>,
+        pub screensharing: Option<bool>,
+        pub camera: Option<bool>,
+    }
+
+    pub type UserBadges = u32;
+    pub type UserFlags = u32;
 );
 

@@ -15,6 +15,12 @@ auto_derived!(
             creator: String,
             /// Id of the server channel this invite points to
             channel: String,
+            /// Whether this server is discoverable
+            discoverable: bool,
+            /// Whether this server is a community server
+            is_community: bool,
+            /// Whether this server is partnered
+            is_partnered: bool,
         },
         /// Invite to a group channel
         Group {
