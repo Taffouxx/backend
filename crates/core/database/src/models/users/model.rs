@@ -8,7 +8,7 @@ use iso8601_timestamp::Timestamp;
 use once_cell::sync::Lazy;
 use rand::seq::SliceRandom;
 use revolt_config::{config, FeaturesLimits};
-use revolt_models::v0::{self, UserBadges, UserFlags, Trophy};
+use revolt_models::v0::{self, Trophy};
 use revolt_presence::filter_online;
 use revolt_result::{create_error, Result};
 use serde_json::json;
@@ -729,7 +729,7 @@ impl User {
         self.update(
             db,
             PartialUser {
-                flags: Some(UserFlags::Suspended as i32),
+                flags: Some(1_i32), // UserFlags::Suspended = 1
                 suspended_until: duration_days.and_then(|dur| {
                     Timestamp::now_utc().checked_add(iso8601_timestamp::Duration::days(dur as i64))
                 }),
@@ -822,7 +822,7 @@ impl User {
 
         if let Some(cutoff) = config.api.users.early_adopter_cutoff {
             if Ulid::from_string(&self.id).unwrap().timestamp_ms() < cutoff {
-                return badges + UserBadges::EarlyAdopter as u32;
+                return badges + 512_u32; // UserBadges::EarlyAdopter = 512
             };
         };
 

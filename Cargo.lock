@@ -7086,7 +7086,7 @@ dependencies = [
  "iso8601-timestamp",
  "linkify 0.8.1",
  "livekit-api",
- "livekit-protocol 0.4.0",
+ "livekit-protocol 0.7.1",
  "livekit-runtime 0.3.1",
  "log",
  "lru 0.11.1",
