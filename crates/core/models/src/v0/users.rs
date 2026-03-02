@@ -134,3 +134,71 @@ auto_derived!(
 pub type UserBadges = u32;
 pub type UserFlags = u32;
 
+/// Data for editing a user's status
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DataEditStatus {
+    /// Custom status text
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
+    /// Presence option
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub presence: Option<Presence>,
+}
+
+/// Data for editing a user's profile
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DataEditProfile {
+    /// Profile text content
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub content: Option<String>,
+    /// Background attachment ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub background: Option<String>,
+}
+
+/// Data for editing a user
+#[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DataEditUser {
+    /// New display name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub display_name: Option<String>,
+    /// Avatar attachment ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub avatar: Option<String>,
+    /// Status update
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<DataEditStatus>,
+    /// Profile update
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub profile: Option<DataEditProfile>,
+    /// Bitfield of user badges (privileged only)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub badges: Option<i32>,
+    /// Bitfield of user flags (privileged only)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub flags: Option<i32>,
+    /// Fields to remove from the user object
+    #[serde(default)]
+    pub remove: Vec<FieldsUser>,
+}
+
+/// Data for sending a friend request
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DataSendFriendRequest {
+    /// Username and discriminator combo, e.g. `User#1234`
+    pub username: String,
+}
+
+/// Response containing mutual relationships between two users
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct MutualResponse {
+    pub users: Vec<String>,
+    pub servers: Vec<String>,
+    pub channels: Vec<String>,
+}
+
+/// Response containing a user's flags
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct FlagResponse {
+    pub flags: i32,
+}
