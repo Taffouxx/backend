@@ -89,22 +89,27 @@ auto_derived!(
     }
 );
 
-// Возвращаем crate::User вместо crate::database::User
+// ✅ ИСПРАВЛЕННАЯ ВЕРСИЯ
 #[cfg(feature = "bson")]
-impl From<crate::User> for User {
-    fn from(value: crate::User) -> Self {
+impl From<revolt_database::User> for User {
+    fn from(value: revolt_database::User) -> Self {
         Self {
             id: value.id,
             username: value.username,
             discriminator: value.discriminator,
             display_name: value.display_name,
             avatar: value.avatar.map(File::from),
-            // Исправляем путь и тут
-            relations: value.relations.map(|r: Vec<crate::Relationship>| {
-                r.into_iter().map(Relationship::from).collect()
-            }).unwrap_or_default(),
+            relations: value
+                .relations
+                .map(|relations| {
+                    relations
+                        .into_iter()
+                        .map(Relationship::from)
+                        .collect()
+                })
+                .unwrap_or_default(),
             badges: value.badges.unwrap_or_default() as u32,
-            status: value.status.map(|s| s.into(true)).flatten(),
+            status: value.status.and_then(|s| UserStatus::from(s).into()),  // ✅ ИСПРАВЛЕНО
             flags: value.flags.unwrap_or_default() as u32,
             privileged: value.privileged,
             bot: value.bot.map(BotInformation::from),
