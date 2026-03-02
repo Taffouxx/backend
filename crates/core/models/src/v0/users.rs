@@ -82,45 +82,9 @@ auto_derived!(
         pub background: Option<File>,
     }
 
-    #[derive(Default)]
     pub struct UserVoiceState {
         pub channel_id: String,
         pub session_id: String,
     }
 );
 
-#[cfg(feature = "bson")]
-impl From<revolt_database::User> for User {
-    fn from(value: revolt_database::User) -> Self {
-        Self {
-            id: value.id,
-            username: value.username,
-            discriminator: value.discriminator,
-            display_name: value.display_name,
-            avatar: value.avatar.map(File::from),
-            
-            // ✅ ЯВНО УКАЗЫВАЕМ ТИП
-            relations: value
-                .relations
-                .map(|relations: Vec<revolt_database::Relationship>| {
-                    relations
-                        .into_iter()
-                        .map(Relationship::from)
-                        .collect()
-                })
-                .unwrap_or_default(),
-                
-            badges: value.badges.unwrap_or_default() as u32,
-            
-            // ✅ УПРОЩАЕМ (убираем .into())
-            status: value.status.and_then(|s| s.into()),
-            
-            flags: value.flags.unwrap_or_default() as u32,
-            privileged: value.privileged,
-            bot: value.bot.map(BotInformation::from),
-            relationship: RelationshipStatus::None,
-            online: false,
-            trophies: value.trophies.unwrap_or_default(),
-        }
-    }
-}
