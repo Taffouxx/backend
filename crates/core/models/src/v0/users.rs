@@ -102,7 +102,7 @@ auto_derived!(
         pub display_name: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub avatar: Option<File>,
-        #[serde(skip_serializing_if = "Vec::is_empty", default)]
+        #[serde(skip_serializing_if = "Option::is_none", default)]
         pub relations: Option<Vec<Relationship>>,
         pub badges: Option<u32>,
         #[serde(skip_serializing_if = "Option::is_none")]
@@ -128,7 +128,8 @@ auto_derived!(
         pub camera: Option<bool>,
     }
 
-    pub type UserBadges = u32;
-    pub type UserFlags = u32;
-);
+    );
+
+pub type UserBadges = u32;
+pub type UserFlags = u32;
 
