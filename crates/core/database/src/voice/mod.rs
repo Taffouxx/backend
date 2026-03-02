@@ -156,6 +156,8 @@ pub async fn create_voice_state(
     let unique_key = format!("{}:{}", &user_id, server_id.unwrap_or(channel_id));
 
     let voice_state = UserVoiceState {
+        channel_id: channel_id.to_string(),
+        session_id: unique_key,
         joined_at,
         id: user_id.to_string(),
         is_receiving: true,
@@ -352,9 +354,12 @@ pub async fn get_voice_state(
             Some(screensharing),
             Some(camera),
         ) => Ok(Some(v0::UserVoiceState {
+            channel_id: channel_id.to_string(),
+            session_id: format!("{}:{}", user_id, server_id.unwrap_or(channel_id)),
             joined_at: Timestamp::UNIX_EPOCH
                 .checked_add(Duration::milliseconds(joined_at))
-                .unwrap(),
+                .unwrap()
+                .to_string(),
             id: user_id.to_string(),
             is_receiving,
             is_publishing,

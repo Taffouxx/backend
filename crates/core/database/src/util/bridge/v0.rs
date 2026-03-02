@@ -81,6 +81,9 @@ impl From<crate::Invite> for Invite {
                 server,
                 creator,
                 channel,
+                discoverable: value.discoverable,
+                is_community: false,
+                is_partnered: false,
             },
         }
     }
@@ -748,6 +751,8 @@ impl From<crate::Server> for Server {
             nsfw: value.nsfw,
             analytics: value.analytics,
             discoverable: value.discoverable,
+            is_community: false,
+            is_partnered: false,
         }
     }
 }
@@ -802,6 +807,8 @@ impl From<crate::PartialServer> for PartialServer {
             nsfw: value.nsfw,
             analytics: value.analytics,
             discoverable: value.discoverable,
+            is_community: false,
+            is_partnered: false,
         }
     }
 }
@@ -1247,7 +1254,7 @@ impl From<crate::PartialUser> for PartialUser {
             relationship: None,
             online: None,
             id: value.id,
-            trophies: vec![],
+            trophies: Some(vec![]),
         }
     }
 }

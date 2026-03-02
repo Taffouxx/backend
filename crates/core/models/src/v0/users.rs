@@ -117,6 +117,7 @@ auto_derived!(
         pub online: Option<bool>,
     }
 
+    #[derive(Default)]
     pub struct PartialUserVoiceState {
         pub channel_id: Option<String>,
         pub session_id: Option<String>,
