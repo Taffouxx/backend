@@ -157,7 +157,7 @@ pub async fn create_voice_state(
 
     let voice_state = UserVoiceState {
         channel_id: channel_id.to_string(),
-        session_id: unique_key,
+        session_id: unique_key.clone(),
         joined_at: joined_at.to_string(),
         id: user_id.to_string(),
         is_receiving: true,
