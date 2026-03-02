@@ -1205,6 +1205,27 @@ impl From<User> for crate::User {
     }
 }
 
+impl From<crate::User> for User {
+    fn from(value: crate::User) -> Self {
+        Self {
+            id: value.id,
+            username: value.username,
+            discriminator: value.discriminator,
+            display_name: value.display_name,
+            avatar: value.avatar.map(File::from),
+            relations: value.relations.unwrap_or_default().into_iter().map(Relationship::from).collect(),
+            badges: value.badges.unwrap_or_default() as u32,
+            status: value.status.and_then(|s| s.into()),
+            trophies: value.trophies.unwrap_or_default(),
+            flags: value.flags.unwrap_or_default() as u32,
+            privileged: value.privileged,
+            bot: value.bot.map(BotInformation::from),
+            relationship: RelationshipStatus::None,
+            online: false,
+        }
+    }
+}
+
 impl From<crate::PartialUser> for PartialUser {
     fn from(value: crate::PartialUser) -> Self {
         PartialUser {
