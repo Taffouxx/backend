@@ -136,6 +136,7 @@ pub type UserFlags = u32;
 
 /// Data for editing a user's status
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
 pub struct DataEditStatus {
     /// Custom status text
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -147,6 +148,7 @@ pub struct DataEditStatus {
 
 /// Data for editing a user's profile
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
 pub struct DataEditProfile {
     /// Profile text content
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -158,6 +160,8 @@ pub struct DataEditProfile {
 
 /// Data for editing a user
 #[derive(Debug, Default, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
+#[cfg_attr(feature = "validator", derive(validator::Validate))]
 pub struct DataEditUser {
     /// New display name
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -184,6 +188,7 @@ pub struct DataEditUser {
 
 /// Data for sending a friend request
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
 pub struct DataSendFriendRequest {
     /// Username and discriminator combo, e.g. `User#1234`
     pub username: String,
@@ -191,6 +196,7 @@ pub struct DataSendFriendRequest {
 
 /// Response containing mutual relationships between two users
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
 pub struct MutualResponse {
     pub users: Vec<String>,
     pub servers: Vec<String>,
@@ -199,6 +205,7 @@ pub struct MutualResponse {
 
 /// Response containing a user's flags
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(feature = "schemas", derive(JsonSchema))]
 pub struct FlagResponse {
     pub flags: i32,
 }

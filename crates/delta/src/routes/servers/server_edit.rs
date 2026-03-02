@@ -81,6 +81,7 @@ pub async fn edit(
         discoverable,
         analytics,
         remove,
+        ..
     } = data;
 
     let mut partial = PartialServer {
