@@ -61,6 +61,7 @@ auto_derived_partial!(
         #[serde(skip_serializing_if = "Option::is_none")]
         pub suspended_until: Option<Timestamp>,
         /// Last acknowledged policy change
+        #[serde(default = "crate::models::users::model::default_timestamp")]
         pub last_acknowledged_policy_change: Timestamp,
     },
     "PartialUser"
@@ -151,6 +152,12 @@ auto_derived!(
         User,
     }
 );
+
+/// Returns Timestamp::UNIX_EPOCH as a serde default
+#[doc(hidden)]
+pub fn default_timestamp() -> Timestamp {
+    Timestamp::UNIX_EPOCH
+}
 
 pub static DISCRIMINATOR_SEARCH_SPACE: Lazy<HashSet<String>> = Lazy::new(|| {
     let mut set = (2..9999)
