@@ -61,11 +61,14 @@ pub async fn call(
 
     let existing_node = get_channel_node(channel.id()).await?;
 
+    let config = config().await;
+
     let node = existing_node
         .or(node)
+        .or_else(|| {
+            config.api.livekit.nodes.keys().next().cloned()
+        })
         .ok_or_else(|| create_error!(UnknownNode))?;
-
-    let config = config().await;
 
     let node_host = config
         .hosts
