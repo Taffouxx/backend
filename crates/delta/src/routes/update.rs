@@ -1,14 +1,16 @@
 use rocket::serde::json::Json;
 use rocket::{get, Route};
 use serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
+use revolt_rocket_okapi::revolt_okapi::openapi3::OpenApi;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, JsonSchema)]
 pub struct PlatformInfo {
     pub url: String,
     pub signature: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, JsonSchema)]
 pub struct UpdateInfo {
     pub version: String,
     pub date: String,
@@ -16,15 +18,19 @@ pub struct UpdateInfo {
     pub platforms: std::collections::HashMap<String, PlatformInfo>,
 }
 
-const CURRENT_VERSION: &str = env!("CARGO_PKG_VERSION");
-
-#[openapi(tag = "Update")]
+#[openapi(tag = "Auto-Update")]
 #[get("/<target>/<current_version>")]
 pub async fn get_update(
     target: &str,
     current_version: &str,
 ) -> Option<Json<UpdateInfo>> {
-    if target != "windows-x86_64" && target != "windows-aarch64" && target != "linux-x86_64" && target != "linux-aarch64" && target != "macos-x86_64" && target != "macos-aarch64" {
+    if target != "windows-x86_64" 
+        && target != "windows-aarch64" 
+        && target != "linux-x86_64" 
+        && target != "linux-aarch64" 
+        && target != "macos-x86_64" 
+        && target != "macos-aarch64" 
+    {
         return None;
     }
 
@@ -59,6 +65,6 @@ pub async fn get_update(
     }))
 }
 
-pub fn routes() -> Vec<Route> {
-    routes![get_update]
+pub fn routes() -> (Vec<Route>, OpenApi) {
+    openapi_get_routes_spec![get_update]
 }

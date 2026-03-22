@@ -370,20 +370,10 @@ fn custom_openapi_spec() -> OpenApi {
                 ..Default::default()
             },
 Tag {
-                name: "Webhooks".to_owned(),
-                description: Some(
-                    "Send messages from 3rd party services".to_owned(),
-                ),
-            },
-            Tag {
                 name: "Auto-Update".to_owned(),
                 description: Some(
                     "Check for and download application updates".to_owned(),
                 ),
-            },
-            Tag {
-                name: "Webhooks".to_owned(),
-                description: Some("Send messages from 3rd party services".to_owned()),
                 ..Default::default()
             },
         ],
