@@ -38,16 +38,6 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - name: Build and push API
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
-          file: ./Dockerfile
-
       - name: Build and push Delta crate
         uses: docker/build-push-action@v6
         with:
@@ -57,8 +47,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64
           file: ./crates/delta/Dockerfile
-          build-args: |
-            BASE_IMAGE=ghcr.io/taffouxx/api-build:latest
 
   build-events:
     name: Build Events (Bonfire)
@@ -100,5 +88,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64
           file: ./crates/bonfire/Dockerfile
-          build-args: |
-            BASE_IMAGE=ghcr.io/taffouxx/api-build:latest
