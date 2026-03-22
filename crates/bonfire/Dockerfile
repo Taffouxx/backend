@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ghcr.io/stoatchat/base:latest
+ARG BASE_IMAGE=ghcr.io/taffouxx/api-build:latest
 FROM ${BASE_IMAGE} AS builder
 FROM debian:12 AS debian
 

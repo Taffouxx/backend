@@ -1,5 +1,5 @@
 # СНАЧАЛА ОБЪЯВЛЯЕМ АРГУМЕНТ, ЧТОБЫ ПРИНЯТЬ ТВОЙ СВЕЖИЙ БИЛД
-ARG BASE_IMAGE=ghcr.io/stoatchat/base:latest
+ARG BASE_IMAGE=ghcr.io/taffouxx/api-build:latest
 
 # ТЕПЕРЬ ИСПОЛЬЗУЕМ ЕГО!
 FROM ${BASE_IMAGE} AS builder
