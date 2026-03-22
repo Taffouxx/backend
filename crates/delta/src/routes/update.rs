@@ -1,7 +1,7 @@
 use lru::LruCache;
 use once_cell::sync::Lazy;
 use rocket::serde::json::Json;
-use rocket::{get, Route, State};
+use rocket::{get, Route};
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use std::sync::Mutex;
@@ -59,16 +59,6 @@ fn version_from_tag(tag: &str) -> String {
     tag.trim_start_matches('v').to_string()
 }
 
-fn find_asset_for_target(release: &GitHubRelease, target: &str) -> Option<&GitHubAsset> {
-    let ext = get_extension_for_target(target);
-    let target_lower = target.replace('_', "-");
-    
-    release.assets.iter().find(|asset| {
-        let name_lower = asset.name.to_lowercase();
-        name_lower.contains(&target_lower) && name_lower.ends_with(&format!(".{}", ext))
-    })
-}
-
 fn find_signature_asset(release: &GitHubRelease) -> Option<&GitHubAsset> {
     release.assets.iter().find(|asset| {
         let name_lower = asset.name.to_lowercase();
@@ -120,7 +110,7 @@ async fn get_cached_release() -> Result<CachedRelease, String> {
     let cached = CachedRelease {
         version,
         tag_name: release.tag_name.clone(),
-        body: release.body.clone(),
+        body: release.body.clone().unwrap_or_default(),
         published_at: release.published_at.clone(),
         platforms: release.assets.iter().filter_map(|a| {
             let ext = if a.name.to_lowercase().contains("windows") {
@@ -253,6 +243,7 @@ pub async fn get_update(
     current_version: &str,
 ) -> Option<Json<UpdateInfo>> {
     let normalized_target = normalize_target(target);
+    let _ = normalized_target; // used for debug logging if needed
     
     let valid_targets = [
         "windows-x86_64", "windows-aarch64",
@@ -301,10 +292,11 @@ pub async fn get_update(
     Some(Json(UpdateInfo {
         version: release.version.clone(),
         date: parse_date(&release.published_at),
-        body: release.body.clone().unwrap_or_else(|| format!(
-            "New version {} is available! You have {}.",
-            latest_ver, current_ver
-        )),
+        body: if release.body.is_empty() {
+            format!("New version {} is available! You have {}.", latest_ver, current_ver)
+        } else {
+            release.body.clone()
+        },
         platforms,
     }))
 }
