@@ -15,6 +15,7 @@ mod root;
 mod safety;
 mod servers;
 mod sync;
+mod update;
 mod users;
 mod webhooks;
 
@@ -40,7 +41,8 @@ pub fn mount(config: Settings, mut rocket: Rocket<Build>) -> Rocket<Build> {
             "/policy" => policy::routes(),
             "/push" => push::routes(),
             "/sync" => sync::routes(),
-            "/webhooks" => webhooks::routes()
+            "/webhooks" => webhooks::routes(),
+            "/update" => update::routes()
         };
     } else {
         mount_endpoints_and_merged_docs! {
@@ -60,7 +62,8 @@ pub fn mount(config: Settings, mut rocket: Rocket<Build>) -> Rocket<Build> {
             "/onboard" => onboard::routes(),
             "/policy" => policy::routes(),
             "/push" => push::routes(),
-            "/sync" => sync::routes()
+            "/sync" => sync::routes(),
+            "/update" => update::routes()
         };
     }
 
@@ -82,7 +85,8 @@ pub fn mount(config: Settings, mut rocket: Rocket<Build>) -> Rocket<Build> {
             "/onboard" => onboard::routes(),
             "/push" => push::routes(),
             "/sync" => sync::routes(),
-            "/webhooks" => webhooks::routes()
+            "/webhooks" => webhooks::routes(),
+            "/update" => update::routes()
         };
     } else {
         mount_endpoints_and_merged_docs! {
@@ -101,7 +105,8 @@ pub fn mount(config: Settings, mut rocket: Rocket<Build>) -> Rocket<Build> {
             "/auth/mfa" => rocket_authifier::routes::mfa::routes(),
             "/onboard" => onboard::routes(),
             "/push" => push::routes(),
-            "/sync" => sync::routes()
+            "/sync" => sync::routes(),
+            "/update" => update::routes()
         };
     }
 
@@ -197,6 +202,12 @@ fn custom_openapi_spec() -> OpenApi {
             "tags": [
               "Sync",
               "Web Push"
+            ]
+          },
+          {
+            "name": "Update",
+            "tags": [
+              "Auto-Update"
             ]
           }
         ]),
@@ -358,12 +369,17 @@ fn custom_openapi_spec() -> OpenApi {
                 description: Some("Upload and retrieve any JSON data between clients".to_owned()),
                 ..Default::default()
             },
-            Tag {
-                name: "Web Push".to_owned(),
+Tag {
+                name: "Webhooks".to_owned(),
                 description: Some(
-                    "Subscribe to and receive Revolt push notifications while offline".to_owned(),
+                    "Send messages from 3rd party services".to_owned(),
                 ),
-                ..Default::default()
+            },
+            Tag {
+                name: "Auto-Update".to_owned(),
+                description: Some(
+                    "Check for and download application updates".to_owned(),
+                ),
             },
             Tag {
                 name: "Webhooks".to_owned(),
