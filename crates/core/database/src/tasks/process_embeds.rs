@@ -13,7 +13,10 @@ use once_cell::sync::Lazy;
 use revolt_models::v0::Embed;
 use std::{collections::HashSet, sync::Arc};
 
-use isahc::prelude::*;
+use reqwest::Client;
+use once_cell::sync::Lazy as ReqwestLazy;
+
+static HTTP: ReqwestLazy<Client> = ReqwestLazy::new(Client::new);
 
 /// Task information
 #[derive(Debug)]
@@ -141,11 +144,13 @@ pub async fn generate(
         tasks.push(spawn(async move {
             let guard = semaphore.acquire().await;
 
-            if let Ok(mut response) = isahc::get_async(format!(
-                "{host}/embed?url={}",
-                url_escape::encode_component(&link)
-            ))
-            .await
+            if let Ok(response) = HTTP
+                .get(format!(
+                    "{host}/embed?url={}",
+                    url_escape::encode_component(&link)
+                ))
+                .send()
+                .await
             {
                 drop(guard);
                 response.json::<Embed>().await.ok()
